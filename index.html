@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Music Board Visualizer</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { overflow: hidden; background: #0a0a2e; }
+    canvas { display: block; }
+    #ui { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 10; display: flex; gap: 12px; }
+    #ui button {
+      padding: 10px 24px; border: none; border-radius: 8px;
+      background: rgba(255,255,255,0.15); color: #fff; font-size: 14px;
+      cursor: pointer; backdrop-filter: blur(10px); transition: background 0.2s;
+    }
+    #ui button:hover { background: rgba(255,255,255,0.3); }
+  </style>
+</head>
+<body>
+  <div id="ui">
+    <button id="btn-play">▶ Play</button>
+    <button id="btn-reset">↺ Reset</button>
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
