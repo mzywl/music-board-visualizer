@@ -47,7 +47,7 @@
     }
     .ctrl-btn:active { transform: scale(0.95); }
 
-    .ctrl-btn svg { width: 20px; height: 20px; fill: currentColor; }
+    .ctrl-btn svg { width: 20px; height: 20px; fill: currentColor; pointer-events: none; }
 
     /* Play button - larger, accent */
     .ctrl-btn--play {
@@ -104,8 +104,6 @@
     <button class="ctrl-btn ctrl-btn--play" id="btn-play" title="播放">
       <svg viewBox="0 0 24 24" id="icon-play"><polygon points="6,4 20,12 6,20"/></svg>
     </button>
-
-    <div id="progress-wrap"><div id="progress-bar"></div></div>
 
     <div id="time-display">0:00 / 0:00</div>
   </div>
