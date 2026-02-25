@@ -160,10 +160,8 @@ const timeDisplay = document.getElementById('time-display')!;
 const PLAY_SVG = '<polygon points="6,4 20,12 6,20"/>';
 const PAUSE_SVG = '<rect x="5" y="4" width="4" height="16"/><rect x="15" y="4" width="4" height="16"/>';
 
-// Total duration from last beat
-const totalDuration = demoBeats.length > 0
-  ? demoBeats[demoBeats.length - 1].time + 1
-  : 10;
+// Total duration from ball path
+const totalDuration = ball.getTotalDuration() || 10;
 
 function formatTime(s: number): string {
   const mins = Math.floor(s / 60);
