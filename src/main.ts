@@ -92,15 +92,19 @@ let cameraTargetY = 2;
 const CAMERA_SMOOTH = 0.03;
 
 // --- Animation loop ---
-const clock = new THREE.Clock();
+const clock = new THREE.Clock(false); // don't auto-start
 let isPlaying = false;
+let lastTime = 0;
 
 function animate() {
   requestAnimationFrame(animate);
-  const dt = Math.min(clock.getDelta(), 0.05); // cap delta
+
+  const now = performance.now() / 1000;
+  const dt = lastTime > 0 ? Math.min(now - lastTime, 0.05) : 0;
+  lastTime = now;
 
   // Update ball and check for board hits
-  const hitIndex = ball.update(dt);
+  const hitIndex = ball.update(isPlaying ? dt : 0);
   if (hitIndex >= 0 && hitIndex < boards.length) {
     boards[hitIndex].activate();
     effects.emit(
@@ -108,6 +112,12 @@ function animate() {
       GLOW_COLORS[hitIndex % GLOW_COLORS.length]
     );
     lyrics.activate(hitIndex);
+  }
+
+  // Check if ball finished
+  if (isPlaying && !ball.playing) {
+    isPlaying = false;
+    iconPlay.innerHTML = PLAY_SVG;
   }
 
   // Update boards
@@ -170,6 +180,20 @@ function updateUI() {
 
 btnPlay.addEventListener('click', () => {
   if (!isPlaying) {
+    // If ball finished, reset first
+    if (!ball.playing && ball.elapsed > 0) {
+      ball.reset(boardDataList);
+      for (const board of boards) {
+        board.activated = false;
+        board.glowIntensity = 0;
+        board.material.color.set(0x1a1a3e);
+        board.material.emissiveIntensity = 0;
+        board.glowMaterial.opacity = 0;
+      }
+      lyrics.reset();
+      cameraTargetY = 2;
+      camera.position.y = 2;
+    }
     ball.play();
     isPlaying = true;
     iconPlay.innerHTML = PAUSE_SVG;
