@@ -4,24 +4,112 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Music Board Visualizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { overflow: hidden; background: #0a0a2e; }
+    body { overflow: hidden; background: #0a0a2e; font-family: 'Inter', 'PingFang SC', sans-serif; }
     canvas { display: block; }
-    #ui { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 10; display: flex; gap: 12px; }
-    #ui button {
-      padding: 10px 24px; border: none; border-radius: 8px;
-      background: rgba(255,255,255,0.15); color: #fff; font-size: 14px;
-      cursor: pointer; backdrop-filter: blur(10px); transition: background 0.2s;
+
+    /* Title */
+    #title {
+      position: fixed; top: 28px; left: 50%; transform: translateX(-50%);
+      z-index: 10; color: rgba(255,255,255,0.7); font-size: 13px;
+      letter-spacing: 4px; text-transform: uppercase;
+      pointer-events: none; user-select: none;
     }
-    #ui button:hover { background: rgba(255,255,255,0.3); }
+
+    /* Bottom control bar */
+    #controls {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 10;
+      display: flex; align-items: center; justify-content: center;
+      gap: 16px; padding: 20px 32px;
+      background: linear-gradient(to top, rgba(10,10,46,0.95) 0%, rgba(10,10,46,0) 100%);
+      pointer-events: none;
+    }
+    #controls > * { pointer-events: auto; }
+
+    /* Buttons */
+    .ctrl-btn {
+      width: 48px; height: 48px; border: none; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all 0.25s ease;
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.7);
+    }
+    .ctrl-btn:hover {
+      background: rgba(255,255,255,0.15);
+      border-color: rgba(255,255,255,0.25);
+      color: #fff;
+      transform: scale(1.08);
+    }
+    .ctrl-btn:active { transform: scale(0.95); }
+
+    .ctrl-btn svg { width: 20px; height: 20px; fill: currentColor; }
+
+    /* Play button - larger, accent */
+    .ctrl-btn--play {
+      width: 60px; height: 60px;
+      background: linear-gradient(135deg, rgba(192,132,252,0.4), rgba(103,232,249,0.3));
+      border: 1px solid rgba(192,132,252,0.4);
+      box-shadow: 0 0 24px rgba(192,132,252,0.2), inset 0 0 12px rgba(255,255,255,0.05);
+    }
+    .ctrl-btn--play:hover {
+      background: linear-gradient(135deg, rgba(192,132,252,0.6), rgba(103,232,249,0.45));
+      border-color: rgba(192,132,252,0.6);
+      box-shadow: 0 0 32px rgba(192,132,252,0.35);
+    }
+    .ctrl-btn--play svg { width: 24px; height: 24px; }
+
+    /* Progress bar */
+    #progress-wrap {
+      flex: 1; max-width: 360px; height: 4px;
+      background: rgba(255,255,255,0.08); border-radius: 2px;
+      overflow: hidden; position: relative;
+    }
+    #progress-bar {
+      height: 100%; width: 0%; border-radius: 2px;
+      background: linear-gradient(90deg, #c084fc, #67e8f9);
+      transition: width 0.1s linear;
+    }
+
+    /* Time display */
+    #time-display {
+      color: rgba(255,255,255,0.5); font-size: 12px;
+      font-variant-numeric: tabular-nums; min-width: 72px;
+      text-align: center; user-select: none;
+    }
+
+    /* Fade in animation */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    #controls { animation: fadeIn 0.8s ease 0.3s both; }
+    #title { animation: fadeIn 0.8s ease 0.1s both; }
   </style>
 </head>
 <body>
-  <div id="ui">
-    <button id="btn-play">▶ Play</button>
-    <button id="btn-reset">↺ Reset</button>
+  <div id="title">Music Board Visualizer</div>
+
+  <div id="controls">
+    <button class="ctrl-btn" id="btn-reset" title="重置">
+      <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.96 7.96 0 0 0 12 4C7.58 4 4.01 7.58 4.01 12S7.58 20 12 20c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+    </button>
+
+    <div id="progress-wrap"><div id="progress-bar"></div></div>
+
+    <button class="ctrl-btn ctrl-btn--play" id="btn-play" title="播放">
+      <svg viewBox="0 0 24 24" id="icon-play"><polygon points="6,4 20,12 6,20"/></svg>
+    </button>
+
+    <div id="progress-wrap"><div id="progress-bar"></div></div>
+
+    <div id="time-display">0:00 / 0:00</div>
   </div>
+
   <script type="module" src="/src/main.ts"></script>
 </body>
 </html>

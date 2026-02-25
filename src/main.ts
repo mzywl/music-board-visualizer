@@ -132,6 +132,9 @@ function animate() {
   pointLight1.position.y = camera.position.y;
   pointLight2.position.y = camera.position.y - 10;
 
+  // Update UI
+  updateUI();
+
   renderer.render(scene, camera);
 }
 
@@ -140,12 +143,36 @@ animate();
 // --- UI ---
 const btnPlay = document.getElementById('btn-play')!;
 const btnReset = document.getElementById('btn-reset')!;
+const iconPlay = document.getElementById('icon-play')!;
+const progressBar = document.getElementById('progress-bar')!;
+const timeDisplay = document.getElementById('time-display')!;
+
+const PLAY_SVG = '<polygon points="6,4 20,12 6,20"/>';
+const PAUSE_SVG = '<rect x="5" y="4" width="4" height="16"/><rect x="15" y="4" width="4" height="16"/>';
+
+// Total duration from last beat
+const totalDuration = demoBeats.length > 0
+  ? demoBeats[demoBeats.length - 1].time + 1
+  : 10;
+
+function formatTime(s: number): string {
+  const mins = Math.floor(s / 60);
+  const secs = Math.floor(s % 60);
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+function updateUI() {
+  const elapsed = Math.max(0, ball.elapsed);
+  const pct = Math.min(100, (elapsed / totalDuration) * 100);
+  progressBar.style.width = `${pct}%`;
+  timeDisplay.textContent = `${formatTime(elapsed)} / ${formatTime(totalDuration)}`;
+}
 
 btnPlay.addEventListener('click', () => {
   if (!isPlaying) {
     ball.play();
     isPlaying = true;
-    btnPlay.textContent = '⏸ Pause';
+    iconPlay.innerHTML = PAUSE_SVG;
   }
 });
 
@@ -162,7 +189,9 @@ btnReset.addEventListener('click', () => {
   lyrics.reset();
   cameraTargetY = 2;
   camera.position.y = 2;
-  btnPlay.textContent = '▶ Play';
+  iconPlay.innerHTML = PLAY_SVG;
+  progressBar.style.width = '0%';
+  timeDisplay.textContent = `0:00 / ${formatTime(totalDuration)}`;
 });
 
 // --- Resize ---
