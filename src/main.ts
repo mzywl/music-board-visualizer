@@ -92,19 +92,23 @@ let cameraTargetY = 2;
 const CAMERA_SMOOTH = 0.03;
 
 // --- Animation loop ---
-const clock = new THREE.Clock(false); // don't auto-start
 let isPlaying = false;
 let lastTime = 0;
 
 function animate() {
   requestAnimationFrame(animate);
 
-  const now = performance.now() / 1000;
-  const dt = lastTime > 0 ? Math.min(now - lastTime, 0.05) : 0;
-  lastTime = now;
+  let dt = 0;
+  if (isPlaying) {
+    const now = performance.now() / 1000;
+    if (lastTime > 0) {
+      dt = Math.min(now - lastTime, 0.05);
+    }
+    lastTime = now;
+  }
 
   // Update ball and check for board hits
-  const hitIndex = ball.update(isPlaying ? dt : 0);
+  const hitIndex = ball.update(dt);
   if (hitIndex >= 0 && hitIndex < boards.length) {
     boards[hitIndex].activate();
     effects.emit(
@@ -194,12 +198,19 @@ btnPlay.addEventListener('click', () => {
     }
     ball.play();
     isPlaying = true;
+    lastTime = 0; // Reset timing
     iconPlay.innerHTML = PAUSE_SVG;
+  } else {
+    // Pause
+    isPlaying = false;
+    lastTime = 0;
+    iconPlay.innerHTML = PLAY_SVG;
   }
 });
 
 btnReset.addEventListener('click', () => {
   isPlaying = false;
+  lastTime = 0;
   ball.reset(boardDataList);
   for (const board of boards) {
     board.activated = false;

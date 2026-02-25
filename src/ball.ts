@@ -141,7 +141,7 @@ export class Ball {
   }
 
   update(dt: number): number {
-    if (!this.playing || this.path.length === 0) return -1;
+    if (!this.playing || this.path.length === 0 || dt === 0) return -1;
 
     this.elapsed += dt;
     let hitBoard = -1;
